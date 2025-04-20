@@ -1,0 +1,72 @@
+Thread count: 16, Iteration: 1
+	User time (seconds): 11.13
+	System time (seconds): 31.10
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:22.49
+	Maximum resident set size (kbytes): 11348
+----------------------------------------
+Thread count: 16, Iteration: 2
+	User time (seconds): 10.89
+	System time (seconds): 33.51
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.09
+	Maximum resident set size (kbytes): 11500
+----------------------------------------
+Thread count: 16, Iteration: 3
+	User time (seconds): 11.32
+	System time (seconds): 30.47
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.86
+	Maximum resident set size (kbytes): 11920
+----------------------------------------
+Thread count: 16, Iteration: 1
+	User time (seconds): 11.15
+	System time (seconds): 35.96
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.47
+	Maximum resident set size (kbytes): 11532
+----------------------------------------
+Thread count: 16, Iteration: 2
+	User time (seconds): 11.48
+	System time (seconds): 38.13
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:25.81
+	Maximum resident set size (kbytes): 11576
+----------------------------------------
+Thread count: 16, Iteration: 3
+	User time (seconds): 10.99
+	System time (seconds): 33.96
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.38
+	Maximum resident set size (kbytes): 11888
+----------------------------------------
+Thread count: 16, Iteration: 1
+	User time (seconds): 9.09
+	System time (seconds): 20.31
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:15.70
+	Maximum resident set size (kbytes): 11084
+----------------------------------------
+Thread count: 16, Iteration: 2
+	User time (seconds): 8.55
+	System time (seconds): 17.93
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:14.36
+	Maximum resident set size (kbytes): 12156
+----------------------------------------
+Thread count: 16, Iteration: 3
+	User time (seconds): 8.05
+	System time (seconds): 18.86
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:14.63
+	Maximum resident set size (kbytes): 11848
+----------------------------------------
+Thread count: 16, Iteration: 1
+	User time (seconds): 8.02
+	System time (seconds): 21.85
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:15.89
+	Maximum resident set size (kbytes): 11392
+----------------------------------------
+Thread count: 16, Iteration: 2
+	User time (seconds): 7.73
+	System time (seconds): 20.09
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:14.66
+	Maximum resident set size (kbytes): 12476
+----------------------------------------
+Thread count: 16, Iteration: 3
+	User time (seconds): 7.37
+	System time (seconds): 19.55
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:14.31
+	Maximum resident set size (kbytes): 11240
+----------------------------------------
