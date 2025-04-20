@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NUM_THREADS 4
+#define NUM_THREADS 20
 #define MAX_LINE_SIZE 1024
 #define FILE_NAME "wiki_dump.txt"
 
