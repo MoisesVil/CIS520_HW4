@@ -10,4 +10,3 @@ all: \$(TARGET)
 
 clean:
 	rm -f \$(TARGET) results.txt
-EOF

@@ -1,0 +1,18 @@
+Process count: 4, Iteration: 1
+	User time (seconds): 361.52
+	System time (seconds): 12.46
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:08.38
+	Maximum resident set size (kbytes): 23116
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 378.01
+	System time (seconds): 14.49
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:17.91
+	Maximum resident set size (kbytes): 23408
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 378.67
+	System time (seconds): 16.86
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:19.83
+	Maximum resident set size (kbytes): 25804
+----------------------------------------

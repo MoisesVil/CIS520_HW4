@@ -1,0 +1,1 @@
+mpirun: Forwarding signal 20 to job

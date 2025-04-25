@@ -1,0 +1,2 @@
+Total lines in file: 1000000
+Working with 1000000 lines
