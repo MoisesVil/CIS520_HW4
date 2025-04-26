@@ -72,12 +72,14 @@ int main(int argc, char *argv[])
 {
     // Initialize MPI
     int rank, size;
+    double start_time, end_time;
+
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    // Start timing
-    clock_t start_time = clock();
+    // Start timing - use MPI_Wtime for accurate parallel timing
+    start_time = MPI_Wtime();
 
     // Command line argument for file path
     char *filename = FILE_NAME;
@@ -122,11 +124,14 @@ int main(int argc, char *argv[])
     // Calculate how many lines each process will process
     int lines_per_process = num_lines / size;
     int remaining_lines = num_lines % size;
+    
+    // Each process calculates its own start and end
     int start = rank * lines_per_process + (rank < remaining_lines ? rank : remaining_lines);
     int end = start + lines_per_process + (rank < remaining_lines ? 1 : 0);
+    int local_count = end - start;
 
     // Allocate an array for this process's results
-    int *results = malloc((end - start) * sizeof(int));
+    int *results = malloc(local_count * sizeof(int));
     if (results == NULL) {
         perror("Memory allocation failed");
         MPI_Abort(MPI_COMM_WORLD, 1);
@@ -135,7 +140,31 @@ int main(int argc, char *argv[])
     // Process lines
     process_lines(start, end, filename, results);
 
-    // Gather results from all processes (root will collect them)
+    // Create arrays to hold the count of results from each process and displacements
+    int *counts = NULL;
+    int *displs = NULL;
+    
+    if (rank == 0) {
+        counts = malloc(size * sizeof(int));
+        displs = malloc(size * sizeof(int));
+        if (counts == NULL || displs == NULL) {
+            perror("Memory allocation failed");
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
+    }
+
+    // Gather the counts from all processes
+    MPI_Gather(&local_count, 1, MPI_INT, counts, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+    // Calculate displacements for Gatherv
+    if (rank == 0) {
+        displs[0] = 0;
+        for (int i = 1; i < size; i++) {
+            displs[i] = displs[i-1] + counts[i-1];
+        }
+    }
+
+    // Allocate memory for all results (only on rank 0)
     int *all_results = NULL;
     if (rank == 0) {
         all_results = malloc(num_lines * sizeof(int));
@@ -145,25 +174,63 @@ int main(int argc, char *argv[])
         }
     }
 
-    MPI_Gather(results, end - start, MPI_INT, all_results, end - start, MPI_INT, 0, MPI_COMM_WORLD);
+    // Use Gatherv to collect results from all processes
+    MPI_Gatherv(results, local_count, MPI_INT, all_results, counts, displs, MPI_INT, 0, MPI_COMM_WORLD);
 
     // Root process prints results
     if (rank == 0) {
+        // Option to print all results - could be a lot for 1M lines!
+        // Uncomment if you want to see all results
+        /*
         for (int i = 0; i < num_lines; i++) {
+            printf("%d: %d\n", i, all_results[i]);
+        }
+        */
+        
+        // Print just a sample (first 10) for verification
+        printf("Sample of results (first 10 lines):\n");
+        for (int i = 0; i < 10 && i < num_lines; i++) {
             printf("%d: %d\n", i, all_results[i]);
         }
 
         // Calculate and print execution time
-        clock_t end_time = clock();
-        double execution_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
-        printf("Execution time: %.2f seconds\n");
+        end_time = MPI_Wtime();
+        double execution_time = end_time - start_time;
+        printf("Execution time: %.2f seconds\n", execution_time);
 
+        // Clean up memory allocations
         free(all_results);
+        free(counts);
+        free(displs);
+    } else {
+        // Non-root processes also record end time for consistency
+        end_time = MPI_Wtime();
     }
 
     // Cleanup
     free(results);
-    MPI_Finalize();
+    
+    // Optional: Gather and print timing info from all processes
+    if (rank == 0) {
+        printf("\nExecution time by process:\n");
+    }
+    
+    double local_exec_time = end_time - start_time;
+    double *all_times = NULL;
+    
+    if (rank == 0) {
+        all_times = malloc(size * sizeof(double));
+    }
+    
+    MPI_Gather(&local_exec_time, 1, MPI_DOUBLE, all_times, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    
+    if (rank == 0) {
+        for (int i = 0; i < size; i++) {
+            printf("Process %d: %.2f seconds\n", i, all_times[i]);
+        }
+        free(all_times);
+    }
 
+    MPI_Finalize();
     return 0;
 }

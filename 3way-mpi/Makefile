@@ -3,10 +3,10 @@ CFLAGS = -O2 -Wall
 TARGET = mpi_max_ascii
 SRC = mpi.c
 
-all: \$(TARGET)
+all: $(TARGET)
 
-\$(TARGET): \$(SRC)
-	\$(CC) \$(CFLAGS) -o \$(TARGET) \$(SRC)
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
 
 clean:
-	rm -f \$(TARGET) results.txt
+	rm -f $(TARGET) results.txt

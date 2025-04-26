@@ -29,10 +29,10 @@ launch.
 --------------------------------------------------------------------------
 Command exited with non-zero status 1
 	Command being timed: "mpirun -np 16 ./mpi_max_ascii /homes/dan/625/wiki_dump.txt"
-	User time (seconds): 0.11
-	System time (seconds): 0.10
-	Percent of CPU this job got: 86%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.24
+	User time (seconds): 0.10
+	System time (seconds): 0.09
+	Percent of CPU this job got: 84%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.23
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
@@ -42,7 +42,7 @@ Command exited with non-zero status 1
 	Major (requiring I/O) page faults: 1
 	Minor (reclaiming a frame) page faults: 1430
 	Voluntary context switches: 98
-	Involuntary context switches: 22
+	Involuntary context switches: 25
 	Swaps: 0
 	File system inputs: 0
 	File system outputs: 88
