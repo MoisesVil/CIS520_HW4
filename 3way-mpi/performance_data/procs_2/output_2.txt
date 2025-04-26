@@ -1,5 +1,4 @@
-Total lines in file: 1000000
-Working with 1000000 lines
+Total lines: 1000000
 Sample of results (first 10 lines):
 0: 125
 1: 125
@@ -10,9 +9,5 @@ Sample of results (first 10 lines):
 6: 125
 7: 125
 8: 125
-9: 124
-Execution time: 39.28 seconds
-
-Execution time by process:
-Process 0: 39.28 seconds
-Process 1: 39.28 seconds
+9: 125
+Execution time: 2.92 seconds
