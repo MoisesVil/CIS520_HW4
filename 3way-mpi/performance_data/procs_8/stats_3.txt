@@ -1,23 +1,51 @@
+[icr-clymene:3825636:0:3825636] Caught signal 11 (Segmentation fault: address not mapped to object at address 0x7fff3ff34f58)
+==== backtrace (tid:3825636) ====
+ 0 0x000000000003e730 __GI___sigaction()  :0
+ 1 0x00000000004016d3 count_lines()  ???:0
+ 2 0x00000000004014bd main()  ???:0
+ 3 0x00000000000295d0 __libc_start_call_main()  ???:0
+ 4 0x0000000000029680 __libc_start_main_alias_2()  :0
+ 5 0x00000000004015b5 _start()  ???:0
+=================================
+[icr-clymene:3825636] *** Process received signal ***
+[icr-clymene:3825636] Signal: Segmentation fault (11)
+[icr-clymene:3825636] Signal code:  (-6)
+[icr-clymene:3825636] Failing at address: 0x129c003a5fe4
+[icr-clymene:3825636] [ 0] /lib64/libc.so.6(+0x3e730)[0x7f0414c3e730]
+[icr-clymene:3825636] [ 1] ./mpi_max_ascii[0x4016d3]
+[icr-clymene:3825636] [ 2] ./mpi_max_ascii[0x4014bd]
+[icr-clymene:3825636] [ 3] /lib64/libc.so.6(+0x295d0)[0x7f0414c295d0]
+[icr-clymene:3825636] [ 4] /lib64/libc.so.6(__libc_start_main+0x80)[0x7f0414c29680]
+[icr-clymene:3825636] [ 5] ./mpi_max_ascii[0x4015b5]
+[icr-clymene:3825636] *** End of error message ***
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun noticed that process rank 0 with PID 0 on node icr-clymene exited on signal 11 (Segmentation fault).
+--------------------------------------------------------------------------
+Command exited with non-zero status 139
 	Command being timed: "mpirun -np 8 ./mpi_max_ascii /homes/dan/625/wiki_dump.txt"
-	User time (seconds): 517.48
-	System time (seconds): 13.67
-	Percent of CPU this job got: 199%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:26.87
+	User time (seconds): 0.27
+	System time (seconds): 1.09
+	Percent of CPU this job got: 14%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:09.41
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 24700
+	Maximum resident set size (kbytes): 151404
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 213
-	Minor (reclaiming a frame) page faults: 22949
-	Voluntary context switches: 12045
-	Involuntary context switches: 182933
+	Major (requiring I/O) page faults: 86
+	Minor (reclaiming a frame) page faults: 10111
+	Voluntary context switches: 2158
+	Involuntary context switches: 27476
 	Swaps: 0
 	File system inputs: 0
-	File system outputs: 24992
+	File system outputs: 17312
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
 	Page size (bytes): 4096
-	Exit status: 0
+	Exit status: 139

@@ -3,64 +3,127 @@
 #include <string.h>
 #include <mpi.h>
 #include <time.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define NUM_THREADS 20
 #define MAX_LINE_SIZE 1024
 #define FILE_NAME "wiki_dump.txt"
+#define BUFFER_SIZE 16777216  // 16MB buffer size for improved I/O
 
 // Global variables
 int num_lines = 0; // Will hold the total number of lines within the file
 
 // Returns the max ASCII value per line
-int collect_ascii_values(char *line)
-{
+int collect_ascii_values(char *line) {
     int max_value = 0;
-    for (int i = 0; line[i] != '\0'; i++)
-    {
-        if ((unsigned char)line[i] > max_value)
-        {
+    for (int i = 0; line[i] != '\0'; i++) {
+        if ((unsigned char)line[i] > max_value) {
             max_value = (unsigned char)line[i];
         }
     }
     return max_value;
 }
 
-// Function for each process each file chunk
-void process_lines(int start, int end, char *filename, int *results)
-{
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t read;
+// Function to count lines in a file efficiently
+long count_lines(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Error opening file for line counting");
+        return -1;
+    }
 
+    char buffer[BUFFER_SIZE];
+    long count = 0;
+    size_t bytes_read;
+
+    // Get file size to allocate buffer efficiently
+    struct stat st;
+    stat(filename, &st);
+    long file_size = st.st_size;
+
+    // Simple and fast line counting with large buffer
+    while ((bytes_read = fread(buffer, 1, sizeof(buffer), file)) > 0) {
+        for (size_t i = 0; i < bytes_read; i++) {
+            if (buffer[i] == '\n') {
+                count++;
+            }
+        }
+    }
+
+    // If the file doesn't end with a newline, count the last line
+    fseek(file, -1, SEEK_END);
+    int last_char = fgetc(file);
+    if (last_char != '\n' && file_size > 0) {
+        count++;
+    }
+
+    fclose(file);
+    return count;
+}
+
+// Improved function to process lines with random access
+void process_lines(int start, int end, char *filename, int *results) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         perror("Error opening file");
-        MPI_Abort(MPI_COMM_WORLD, 1);  // Abort if file can't be opened
+        MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
-    // Move to the starting line for this process
-    long current_line = 0;
-    while (current_line < start && (read = getline(&line, &len, file)) != -1) {
-        current_line++;
+    // Pre-allocate line buffer
+    char *line = malloc(MAX_LINE_SIZE);
+    if (line == NULL) {
+        perror("Memory allocation failed for line buffer");
+        fclose(file);
+        MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
-    // Process lines from start to end or EOF, whichever comes first
+    // First pass: find position of the starting line
+    long file_pos = 0;
+    long line_number = 0;
+    
+    if (start > 0) {
+        char buffer[BUFFER_SIZE];
+        size_t bytes_read;
+        
+        while (line_number < start && (bytes_read = fread(buffer, 1, sizeof(buffer), file)) > 0) {
+            for (size_t i = 0; i < bytes_read; i++) {
+                file_pos++;
+                if (buffer[i] == '\n') {
+                    line_number++;
+                    if (line_number == start) {
+                        break;
+                    }
+                }
+            }
+            if (line_number == start) {
+                break;
+            }
+        }
+        
+        // Seek to the correct position
+        fseek(file, file_pos, SEEK_SET);
+    }
+
+    // Second pass: read assigned lines
     int i = 0;
-    while (i < (end - start) && (read = getline(&line, &len, file)) != -1) {
+    char temp_buffer[MAX_LINE_SIZE];
+    while (i < (end - start) && fgets(temp_buffer, MAX_LINE_SIZE, file) != NULL) {
         // Skip empty lines or just newlines
-        if (read <= 1) {
+        if (strlen(temp_buffer) <= 1) {
             continue;
         }
 
-        size_t line_len = strlen(line);
-        if (line_len > 0 && line[line_len-1] == '\n') {
-            line[line_len-1] = '\0';
+        // Remove trailing newline if present
+        size_t line_len = strlen(temp_buffer);
+        if (temp_buffer[line_len-1] == '\n') {
+            temp_buffer[line_len-1] = '\0';
         }
 
-        // Find max ASCII value for this line
-        results[i] = collect_ascii_values(line);
+        // Process the line
+        results[i] = collect_ascii_values(temp_buffer);
         i++;
-        current_line++;
     }
 
     // Cleanup
@@ -68,8 +131,7 @@ void process_lines(int start, int end, char *filename, int *results)
     fclose(file);
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     // Initialize MPI
     int rank, size;
     double start_time, end_time;
@@ -87,29 +149,13 @@ int main(int argc, char *argv[])
         filename = argv[1];
     }
 
-    // Count the number of lines in the file - more accurate method (done by rank 0)
+    // Count the number of lines in the file - more efficient method (done by rank 0)
     if (rank == 0) {
-        FILE *file = fopen(filename, "r");
-        if (file == NULL) {
-            perror("Error opening file");
+        num_lines = count_lines(filename);
+        if (num_lines <= 0) {
+            printf("Error counting lines or empty file\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
-
-        // More accurate line counting
-        num_lines = 0;
-        int ch;
-        int prev_char = '\n'; // Treat file as starting with a newline
-        while ((ch = fgetc(file)) != EOF) {
-            if (ch == '\n') {
-                num_lines++;
-            }
-            prev_char = ch;
-        }
-        // Count the last line if it doesn't end with a newline
-        if (prev_char != '\n') {
-            num_lines++;
-        }
-        fclose(file);
         printf("Total lines in file: %d\n", num_lines);
 
         // Force the line count to exactly 1,000,000 for this file
@@ -137,7 +183,7 @@ int main(int argc, char *argv[])
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
-    // Process lines
+    // Process lines more efficiently
     process_lines(start, end, filename, results);
 
     // Create arrays to hold the count of results from each process and displacements
@@ -179,14 +225,6 @@ int main(int argc, char *argv[])
 
     // Root process prints results
     if (rank == 0) {
-        // Option to print all results - could be a lot for 1M lines!
-        // Uncomment if you want to see all results
-        /*
-        for (int i = 0; i < num_lines; i++) {
-            printf("%d: %d\n", i, all_results[i]);
-        }
-        */
-        
         // Print just a sample (first 10) for verification
         printf("Sample of results (first 10 lines):\n");
         for (int i = 0; i < 10 && i < num_lines; i++) {
