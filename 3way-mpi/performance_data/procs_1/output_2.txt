@@ -11,7 +11,7 @@ Sample of results (first 10 lines):
 7: 125
 8: 125
 9: 124
-Execution time: 44.56 seconds
+Execution time: 48.23 seconds
 
 Execution time by process:
-Process 0: 44.56 seconds
+Process 0: 48.23 seconds
