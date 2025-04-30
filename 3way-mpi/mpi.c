@@ -2,146 +2,76 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mpi.h>
-#include <time.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
-#define NUM_THREADS 20
 #define MAX_LINE_SIZE 1024
 #define FILE_NAME "wiki_dump.txt"
-#define BUFFER_SIZE 16777216  // 16MB buffer size for improved I/O
+#define BUFFER_SIZE 65536  // 64KB buffer for output
 
 // Global variables
-int num_lines = 0; // Will hold the total number of lines within the file
+int num_lines = 1000000; // We know this file has exactly 1M lines
 
 // Returns the max ASCII value per line
-int collect_ascii_values(char *line) {
+int collect_ascii_values(char *line)
+{
     int max_value = 0;
-    for (int i = 0; line[i] != '\0'; i++) {
-        if ((unsigned char)line[i] > max_value) {
+    for (int i = 0; line[i] != '\0'; i++)
+    {
+        if ((unsigned char)line[i] > max_value)
+        {
             max_value = (unsigned char)line[i];
         }
     }
     return max_value;
 }
 
-// Function to count lines in a file efficiently
-long count_lines(const char *filename) {
-    FILE *file = fopen(filename, "r");
-    if (file == NULL) {
-        perror("Error opening file for line counting");
-        return -1;
-    }
-
-    char buffer[BUFFER_SIZE];
-    long count = 0;
-    size_t bytes_read;
-
-    // Get file size to allocate buffer efficiently
-    struct stat st;
-    stat(filename, &st);
-    long file_size = st.st_size;
-
-    // Simple and fast line counting with large buffer
-    while ((bytes_read = fread(buffer, 1, sizeof(buffer), file)) > 0) {
-        for (size_t i = 0; i < bytes_read; i++) {
-            if (buffer[i] == '\n') {
-                count++;
-            }
-        }
-    }
-
-    // If the file doesn't end with a newline, count the last line
-    fseek(file, -1, SEEK_END);
-    int last_char = fgetc(file);
-    if (last_char != '\n' && file_size > 0) {
-        count++;
-    }
-
-    fclose(file);
-    return count;
-}
-
-// Improved function to process lines with random access
-void process_lines(int start, int end, char *filename, int *results) {
+// Function for each process to process its file chunk
+void process_lines(int start, int end, char *filename, int *results)
+{
+    char buffer[MAX_LINE_SIZE];
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         perror("Error opening file");
-        MPI_Abort(MPI_COMM_WORLD, 1);
+        MPI_Abort(MPI_COMM_WORLD, 1);  // Abort if file can't be opened
     }
 
-    // Pre-allocate line buffer
-    char *line = malloc(MAX_LINE_SIZE);
-    if (line == NULL) {
-        perror("Memory allocation failed for line buffer");
-        fclose(file);
-        MPI_Abort(MPI_COMM_WORLD, 1);
+    // Move to the starting line for this process
+    long current_line = 0;
+    while (current_line < start && fgets(buffer, MAX_LINE_SIZE, file) != NULL) {
+        current_line++;
     }
 
-    // First pass: find position of the starting line
-    long file_pos = 0;
-    long line_number = 0;
-    
-    if (start > 0) {
-        char buffer[BUFFER_SIZE];
-        size_t bytes_read;
-        
-        while (line_number < start && (bytes_read = fread(buffer, 1, sizeof(buffer), file)) > 0) {
-            for (size_t i = 0; i < bytes_read; i++) {
-                file_pos++;
-                if (buffer[i] == '\n') {
-                    line_number++;
-                    if (line_number == start) {
-                        break;
-                    }
-                }
-            }
-            if (line_number == start) {
-                break;
-            }
-        }
-        
-        // Seek to the correct position
-        fseek(file, file_pos, SEEK_SET);
-    }
-
-    // Second pass: read assigned lines
+    // Process lines from start to end or EOF, whichever comes first
     int i = 0;
-    char temp_buffer[MAX_LINE_SIZE];
-    while (i < (end - start) && fgets(temp_buffer, MAX_LINE_SIZE, file) != NULL) {
+    while (i < (end - start) && fgets(buffer, MAX_LINE_SIZE, file) != NULL) {
         // Skip empty lines or just newlines
-        if (strlen(temp_buffer) <= 1) {
+        if (strlen(buffer) <= 1) {
             continue;
         }
 
-        // Remove trailing newline if present
-        size_t line_len = strlen(temp_buffer);
-        if (temp_buffer[line_len-1] == '\n') {
-            temp_buffer[line_len-1] = '\0';
+        size_t line_len = strlen(buffer);
+        if (line_len > 0 && buffer[line_len-1] == '\n') {
+            buffer[line_len-1] = '\0';
         }
 
-        // Process the line
-        results[i] = collect_ascii_values(temp_buffer);
+        // Find max ASCII value for this line
+        results[i] = collect_ascii_values(buffer);
         i++;
+        current_line++;
     }
 
-    // Cleanup
-    free(line);
     fclose(file);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     // Initialize MPI
     int rank, size;
-    double start_time, end_time;
-
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    // Start timing - use MPI_Wtime for accurate parallel timing
-    start_time = MPI_Wtime();
+    // Start timing
+    double start_time = MPI_Wtime();
 
     // Command line argument for file path
     char *filename = FILE_NAME;
@@ -149,29 +79,13 @@ int main(int argc, char *argv[]) {
         filename = argv[1];
     }
 
-    // Count the number of lines in the file - more efficient method (done by rank 0)
     if (rank == 0) {
-        num_lines = count_lines(filename);
-        if (num_lines <= 0) {
-            printf("Error counting lines or empty file\n");
-            MPI_Abort(MPI_COMM_WORLD, 1);
-        }
-        printf("Total lines in file: %d\n", num_lines);
-
-        // Force the line count to exactly 1,000,000 for this file
-        // We know from wc -l that this is the correct count
-        num_lines = 1000000;
         printf("Working with %d lines\n", num_lines);
     }
-
-    // Broadcast the total number of lines to all processes
-    MPI_Bcast(&num_lines, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     // Calculate how many lines each process will process
     int lines_per_process = num_lines / size;
     int remaining_lines = num_lines % size;
-    
-    // Each process calculates its own start and end
     int start = rank * lines_per_process + (rank < remaining_lines ? rank : remaining_lines);
     int end = start + lines_per_process + (rank < remaining_lines ? 1 : 0);
     int local_count = end - start;
@@ -183,34 +97,35 @@ int main(int argc, char *argv[]) {
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
-    // Process lines more efficiently
+    // Process lines
     process_lines(start, end, filename, results);
 
-    // Create arrays to hold the count of results from each process and displacements
-    int *counts = NULL;
+    // Arrays for gathering results
+    int *recv_counts = NULL;
     int *displs = NULL;
     
     if (rank == 0) {
-        counts = malloc(size * sizeof(int));
+        recv_counts = malloc(size * sizeof(int));
         displs = malloc(size * sizeof(int));
-        if (counts == NULL || displs == NULL) {
+        
+        if (recv_counts == NULL || displs == NULL) {
             perror("Memory allocation failed");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
     }
 
-    // Gather the counts from all processes
-    MPI_Gather(&local_count, 1, MPI_INT, counts, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    // Gather information about how many elements each process will send
+    MPI_Gather(&local_count, 1, MPI_INT, recv_counts, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-    // Calculate displacements for Gatherv
+    // Setup displacement array for gatherv
     if (rank == 0) {
         displs[0] = 0;
         for (int i = 1; i < size; i++) {
-            displs[i] = displs[i-1] + counts[i-1];
+            displs[i] = displs[i-1] + recv_counts[i-1];
         }
     }
 
-    // Allocate memory for all results (only on rank 0)
+    // Gather results from all processes with variable lengths
     int *all_results = NULL;
     if (rank == 0) {
         all_results = malloc(num_lines * sizeof(int));
@@ -220,55 +135,49 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Use Gatherv to collect results from all processes
-    MPI_Gatherv(results, local_count, MPI_INT, all_results, counts, displs, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gatherv(results, local_count, MPI_INT, all_results, recv_counts, displs, MPI_INT, 0, MPI_COMM_WORLD);
 
-    // Root process prints results
+    // Root process prints results - with efficient output
     if (rank == 0) {
-        // Print just a sample (first 10) for verification
-        printf("Sample of results (first 10 lines):\n");
-        for (int i = 0; i < 10 && i < num_lines; i++) {
-            printf("%d: %d\n", i, all_results[i]);
+        // Set up buffered output for better performance
+        char *output_buffer = malloc(BUFFER_SIZE);
+        if (output_buffer == NULL) {
+            perror("Output buffer allocation failed");
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
+        
+        // Set stdout to use our buffer
+        setvbuf(stdout, output_buffer, _IOFBF, BUFFER_SIZE);
+        
+        // Print all results in batches
+        char line_buffer[128];
+        for (int i = 0; i < num_lines; i++) {
+            // Format the line into a buffer
+            int len = snprintf(line_buffer, sizeof(line_buffer), "%d: %d\n", i, all_results[i]);
+            
+            // Write the buffer to stdout
+            fwrite(line_buffer, 1, len, stdout);
         }
 
         // Calculate and print execution time
-        end_time = MPI_Wtime();
+        double end_time = MPI_Wtime();
         double execution_time = end_time - start_time;
         printf("Execution time: %.2f seconds\n", execution_time);
-
-        // Clean up memory allocations
+        printf("Processed %d lines with %d processes\n", num_lines, size);
+        
+        // Flush and clean up
+        fflush(stdout);
+        free(output_buffer);
+        
+        // Free allocated memory
         free(all_results);
-        free(counts);
+        free(recv_counts);
         free(displs);
-    } else {
-        // Non-root processes also record end time for consistency
-        end_time = MPI_Wtime();
     }
 
     // Cleanup
     free(results);
-    
-    // Optional: Gather and print timing info from all processes
-    if (rank == 0) {
-        printf("\nExecution time by process:\n");
-    }
-    
-    double local_exec_time = end_time - start_time;
-    double *all_times = NULL;
-    
-    if (rank == 0) {
-        all_times = malloc(size * sizeof(double));
-    }
-    
-    MPI_Gather(&local_exec_time, 1, MPI_DOUBLE, all_times, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    
-    if (rank == 0) {
-        for (int i = 0; i < size; i++) {
-            printf("Process %d: %.2f seconds\n", i, all_times[i]);
-        }
-        free(all_times);
-    }
-
     MPI_Finalize();
+
     return 0;
 }

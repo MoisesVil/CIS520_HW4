@@ -178,3 +178,297 @@ Process count: 4, Iteration: 3
 	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:04.83
 	Maximum resident set size (kbytes): 151408
 ----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.40
+	System time (seconds): 1.16
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.39
+	Maximum resident set size (kbytes): 151936
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.38
+	System time (seconds): 1.11
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:04.81
+	Maximum resident set size (kbytes): 151936
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.37
+	System time (seconds): 1.27
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.18
+	Maximum resident set size (kbytes): 151168
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.40
+	System time (seconds): 1.21
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.71
+	Maximum resident set size (kbytes): 151168
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.40
+	System time (seconds): 1.31
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.17
+	Maximum resident set size (kbytes): 151424
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.44
+	System time (seconds): 1.26
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.09
+	Maximum resident set size (kbytes): 151296
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.42
+	System time (seconds): 1.43
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.37
+	Maximum resident set size (kbytes): 151808
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.42
+	System time (seconds): 1.26
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.36
+	Maximum resident set size (kbytes): 151672
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.40
+	System time (seconds): 1.27
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.01
+	Maximum resident set size (kbytes): 151932
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.43
+	System time (seconds): 1.22
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.25
+	Maximum resident set size (kbytes): 151680
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.41
+	System time (seconds): 1.35
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.21
+	Maximum resident set size (kbytes): 151808
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.38
+	System time (seconds): 1.29
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.15
+	Maximum resident set size (kbytes): 151680
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.09
+	System time (seconds): 0.09
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.23
+	Maximum resident set size (kbytes): 9728
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.09
+	System time (seconds): 0.09
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.22
+	Maximum resident set size (kbytes): 11604
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.09
+	System time (seconds): 0.10
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.24
+	Maximum resident set size (kbytes): 9600
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.35
+	System time (seconds): 1.39
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.30
+	Maximum resident set size (kbytes): 151808
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.43
+	System time (seconds): 1.29
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.52
+	Maximum resident set size (kbytes): 151424
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.42
+	System time (seconds): 1.46
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.44
+	Maximum resident set size (kbytes): 151936
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.44
+	System time (seconds): 1.23
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.03
+	Maximum resident set size (kbytes): 151424
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.34
+	System time (seconds): 1.07
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:04.85
+	Maximum resident set size (kbytes): 151540
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.37
+	System time (seconds): 1.30
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.42
+	Maximum resident set size (kbytes): 151420
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.41
+	System time (seconds): 1.16
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.18
+	Maximum resident set size (kbytes): 151776
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.40
+	System time (seconds): 1.15
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.21
+	Maximum resident set size (kbytes): 153896
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.43
+	System time (seconds): 1.18
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.05
+	Maximum resident set size (kbytes): 153728
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.40
+	System time (seconds): 1.41
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.36
+	Maximum resident set size (kbytes): 151552
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.39
+	System time (seconds): 1.40
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.32
+	Maximum resident set size (kbytes): 151536
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.43
+	System time (seconds): 1.15
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.63
+	Maximum resident set size (kbytes): 151296
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.39
+	System time (seconds): 1.23
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.30
+	Maximum resident set size (kbytes): 153972
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.44
+	System time (seconds): 1.21
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.61
+	Maximum resident set size (kbytes): 151292
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.39
+	System time (seconds): 1.45
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.58
+	Maximum resident set size (kbytes): 153624
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.10
+	System time (seconds): 0.13
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.84
+	Maximum resident set size (kbytes): 9728
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.10
+	System time (seconds): 0.11
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.93
+	Maximum resident set size (kbytes): 9216
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.08
+	System time (seconds): 0.12
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.87
+	Maximum resident set size (kbytes): 11688
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 342.47
+	System time (seconds): 15.49
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:00.41
+	Maximum resident set size (kbytes): 23852
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 345.68
+	System time (seconds): 14.77
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:01.51
+	Maximum resident set size (kbytes): 23152
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 349.17
+	System time (seconds): 15.03
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:03.29
+	Maximum resident set size (kbytes): 23296
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 0.12
+	System time (seconds): 0.19
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.82
+	Maximum resident set size (kbytes): 9600
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 0.11
+	System time (seconds): 0.11
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.73
+	Maximum resident set size (kbytes): 9472
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 0.13
+	System time (seconds): 0.13
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.87
+	Maximum resident set size (kbytes): 9728
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 7.37
+	System time (seconds): 12.20
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.38
+	Maximum resident set size (kbytes): 23020
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 6.84
+	System time (seconds): 10.97
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:10.04
+	Maximum resident set size (kbytes): 23132
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 7.63
+	System time (seconds): 11.41
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:10.76
+	Maximum resident set size (kbytes): 24112
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 7.48
+	System time (seconds): 12.44
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.09
+	Maximum resident set size (kbytes): 23092
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 7.38
+	System time (seconds): 12.91
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.93
+	Maximum resident set size (kbytes): 25692
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 7.19
+	System time (seconds): 11.89
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.04
+	Maximum resident set size (kbytes): 25388
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 7.56
+	System time (seconds): 12.36
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.09
+	Maximum resident set size (kbytes): 23652
+----------------------------------------
+Process count: 4, Iteration: 1
+	User time (seconds): 5.50
+	System time (seconds): 5.24
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.65
+	Maximum resident set size (kbytes): 23912
+----------------------------------------
+Process count: 4, Iteration: 2
+	User time (seconds): 5.52
+	System time (seconds): 5.12
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.78
+	Maximum resident set size (kbytes): 23524
+----------------------------------------
+Process count: 4, Iteration: 3
+	User time (seconds): 5.52
+	System time (seconds): 5.08
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.61
+	Maximum resident set size (kbytes): 23424
+----------------------------------------
