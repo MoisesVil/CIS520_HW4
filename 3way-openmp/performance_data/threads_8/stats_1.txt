@@ -1,18 +1,18 @@
 	Command being timed: "./openmp_max_ascii /homes/dan/625/wiki_dump.txt"
-	User time (seconds): 4.49
-	System time (seconds): 2.53
-	Percent of CPU this job got: 126%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.54
+	User time (seconds): 1.92
+	System time (seconds): 1.28
+	Percent of CPU this job got: 113%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.83
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 1696468
+	Maximum resident set size (kbytes): 924468
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 0
-	Minor (reclaiming a frame) page faults: 421851
-	Voluntary context switches: 63
-	Involuntary context switches: 2067
+	Minor (reclaiming a frame) page faults: 228745
+	Voluntary context switches: 16
+	Involuntary context switches: 63
 	Swaps: 0
 	File system inputs: 0
 	File system outputs: 23224

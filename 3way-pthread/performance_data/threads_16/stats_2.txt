@@ -1,18 +1,18 @@
 	Command being timed: "./pthread_max_ascii /homes/dan/625/wiki_dump.txt"
-	User time (seconds): 16.28
-	System time (seconds): 8.57
-	Percent of CPU this job got: 98%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:25.19
+	User time (seconds): 6.05
+	System time (seconds): 2.34
+	Percent of CPU this job got: 135%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.22
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 6128
+	Maximum resident set size (kbytes): 1696324
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 0
-	Minor (reclaiming a frame) page faults: 1223
-	Voluntary context switches: 39
-	Involuntary context switches: 211
+	Minor (reclaiming a frame) page faults: 421829
+	Voluntary context switches: 8
+	Involuntary context switches: 747
 	Swaps: 0
 	File system inputs: 0
 	File system outputs: 23224

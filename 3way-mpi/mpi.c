@@ -6,101 +6,84 @@
 #define MAX_LINE_SIZE 1024
 #define FILE_NAME "wiki_dump.txt"
 #define BUFFER_SIZE 65536  // 64KB buffer for output
-
-// Global variables
-int num_lines = 1000000; // We know this file has exactly 1M lines
+#define TOTAL_LINES 1000000
 
 // Returns the max ASCII value per line
-int collect_ascii_values(char *line)
-{
+int collect_ascii_values(char *line) {
     int max_value = 0;
-    for (int i = 0; line[i] != '\0'; i++)
-    {
-        if ((unsigned char)line[i] > max_value)
-        {
-            max_value = (unsigned char)line[i];
+    int len = strlen(line);
+    
+    for (int i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)line[i];
+        if (c > max_value) {
+            max_value = c;
         }
     }
     return max_value;
 }
 
-// Function for each process to process its file chunk
-void process_lines(int start, int end, char *filename, int *results)
-{
+// Function for each process to read and process its own chunk
+void process_chunk(int start, int end, char *filename, int *results) {
     char buffer[MAX_LINE_SIZE];
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         perror("Error opening file");
-        MPI_Abort(MPI_COMM_WORLD, 1);  // Abort if file can't be opened
+        MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
-    // Move to the starting line for this process
-    long current_line = 0;
-    while (current_line < start && fgets(buffer, MAX_LINE_SIZE, file) != NULL) {
-        current_line++;
+    // Skip to start position
+    for (int i = 0; i < start && fgets(buffer, MAX_LINE_SIZE, file) != NULL; i++) {
+        // Skip lines until we reach our starting position
     }
-
-    // Process lines from start to end or EOF, whichever comes first
-    int i = 0;
-    while (i < (end - start) && fgets(buffer, MAX_LINE_SIZE, file) != NULL) {
-        // Skip empty lines or just newlines
-        if (strlen(buffer) <= 1) {
-            continue;
+    
+    // Process assigned lines
+    for (int i = 0; i < (end - start) && fgets(buffer, MAX_LINE_SIZE, file) != NULL; i++) {
+        // Remove newline if present
+        size_t len = strlen(buffer);
+        if (len > 0 && buffer[len-1] == '\n') {
+            buffer[len-1] = '\0';
         }
-
-        size_t line_len = strlen(buffer);
-        if (line_len > 0 && buffer[line_len-1] == '\n') {
-            buffer[line_len-1] = '\0';
-        }
-
-        // Find max ASCII value for this line
+        
+        // Find max ASCII value
         results[i] = collect_ascii_values(buffer);
-        i++;
-        current_line++;
     }
-
+    
     fclose(file);
 }
 
-int main(int argc, char *argv[])
-{
-    // Initialize MPI
+int main(int argc, char *argv[]) {
     int rank, size;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    // Start timing
     double start_time = MPI_Wtime();
 
-    // Command line argument for file path
+    // Set filename from command line or use default
     char *filename = FILE_NAME;
     if (argc > 1) {
         filename = argv[1];
     }
+    
+    // Each process calculates its chunk
+    int lines_per_process = TOTAL_LINES / size;
+    int remaining_lines = TOTAL_LINES % size;
+    
+    int start_line = rank * lines_per_process + (rank < remaining_lines ? rank : remaining_lines);
+    int end_line = start_line + lines_per_process + (rank < remaining_lines ? 1 : 0);
+    int local_count = end_line - start_line;
 
-    if (rank == 0) {
-        printf("Working with %d lines\n", num_lines);
-    }
-
-    // Calculate how many lines each process will process
-    int lines_per_process = num_lines / size;
-    int remaining_lines = num_lines % size;
-    int start = rank * lines_per_process + (rank < remaining_lines ? rank : remaining_lines);
-    int end = start + lines_per_process + (rank < remaining_lines ? 1 : 0);
-    int local_count = end - start;
-
-    // Allocate an array for this process's results
-    int *results = malloc(local_count * sizeof(int));
-    if (results == NULL) {
+    // Allocate memory for local results
+    int *local_results = malloc(local_count * sizeof(int));
+    if (local_results == NULL) {
         perror("Memory allocation failed");
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
-
-    // Process lines
-    process_lines(start, end, filename, results);
-
-    // Arrays for gathering results
+    
+    // Each process reads and processes its own chunk directly
+    process_chunk(start_line, end_line, filename, local_results);
+    
+    // Prepare for gathering results
     int *recv_counts = NULL;
     int *displs = NULL;
     
@@ -113,71 +96,66 @@ int main(int argc, char *argv[])
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
     }
-
-    // Gather information about how many elements each process will send
+    
+    // Gather all counts to know how many results to expect from each process
     MPI_Gather(&local_count, 1, MPI_INT, recv_counts, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-    // Setup displacement array for gatherv
+    
+    // Setup displacement array on rank 0
     if (rank == 0) {
         displs[0] = 0;
         for (int i = 1; i < size; i++) {
             displs[i] = displs[i-1] + recv_counts[i-1];
         }
     }
-
-    // Gather results from all processes with variable lengths
+    
+    // Gather results from all processes
     int *all_results = NULL;
     if (rank == 0) {
-        all_results = malloc(num_lines * sizeof(int));
+        all_results = malloc(TOTAL_LINES * sizeof(int));
         if (all_results == NULL) {
             perror("Memory allocation failed");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
     }
-
-    MPI_Gatherv(results, local_count, MPI_INT, all_results, recv_counts, displs, MPI_INT, 0, MPI_COMM_WORLD);
-
-    // Root process prints results - with efficient output
+    
+    MPI_Gatherv(local_results, local_count, MPI_INT, 
+                all_results, recv_counts, displs, MPI_INT, 
+                0, MPI_COMM_WORLD);
+    
+    // Print results from rank 0
     if (rank == 0) {
-        // Set up buffered output for better performance
+        // Set up buffered output
         char *output_buffer = malloc(BUFFER_SIZE);
         if (output_buffer == NULL) {
             perror("Output buffer allocation failed");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
         
-        // Set stdout to use our buffer
         setvbuf(stdout, output_buffer, _IOFBF, BUFFER_SIZE);
         
-        // Print all results in batches
+        // Print results in batches for better performance
         char line_buffer[128];
-        for (int i = 0; i < num_lines; i++) {
-            // Format the line into a buffer
+        for (int i = 0; i < TOTAL_LINES; i++) {
             int len = snprintf(line_buffer, sizeof(line_buffer), "%d: %d\n", i, all_results[i]);
-            
-            // Write the buffer to stdout
             fwrite(line_buffer, 1, len, stdout);
         }
-
-        // Calculate and print execution time
-        double end_time = MPI_Wtime();
-        double execution_time = end_time - start_time;
-        printf("Execution time: %.2f seconds\n", execution_time);
-        printf("Processed %d lines with %d processes\n", num_lines, size);
         
-        // Flush and clean up
+        // Print timing information
+        double end_time = MPI_Wtime();
+        printf("Execution time: %.2f seconds\n", end_time - start_time);
+        printf("Processed %d lines with %d processes\n", TOTAL_LINES, size);
+        
+        // Cleanup
         fflush(stdout);
         free(output_buffer);
-        
-        // Free allocated memory
         free(all_results);
         free(recv_counts);
         free(displs);
     }
-
-    // Cleanup
-    free(results);
+    
+    // Cleanup and finalize
+    free(local_results);
     MPI_Finalize();
-
+    
     return 0;
 }
