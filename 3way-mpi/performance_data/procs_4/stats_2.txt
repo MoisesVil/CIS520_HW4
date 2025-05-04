@@ -1,18 +1,18 @@
-	Command being timed: "mpirun -np 4 ./mpi_max_ascii /homes/dan/625/wiki_dump.txt"
-	User time (seconds): 5.52
-	System time (seconds): 5.12
-	Percent of CPU this job got: 156%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.78
+	Command being timed: "mpirun --oversubscribe -np 4 ./mpi_max_ascii /homes/dan/625/wiki_dump.txt"
+	User time (seconds): 6.14
+	System time (seconds): 5.31
+	Percent of CPU this job got: 162%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:07.03
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 23524
+	Maximum resident set size (kbytes): 24104
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 139
-	Minor (reclaiming a frame) page faults: 13714
-	Voluntary context switches: 12006
-	Involuntary context switches: 1934
+	Minor (reclaiming a frame) page faults: 13740
+	Voluntary context switches: 12800
+	Involuntary context switches: 340
 	Swaps: 0
 	File system inputs: 0
 	File system outputs: 43512

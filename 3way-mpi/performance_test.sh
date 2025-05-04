@@ -24,7 +24,7 @@ run_tests() {
         output_file="$proc_dir/output_$i.txt"
         stats_file="$proc_dir/stats_$i.txt"
 
-        /usr/bin/time -v mpirun -np $proc_count ./mpi_max_ascii $INPUT_FILE > $output_file 2> $stats_file
+        /usr/bin/time -v mpirun --oversubscribe -np $proc_count ./mpi_max_ascii $INPUT_FILE > $output_file 2> $stats_file
 
         echo "Process count: $proc_count, Iteration: $i" >> "$proc_dir/summary.txt"
         grep "User time" $stats_file >> "$proc_dir/summary.txt"

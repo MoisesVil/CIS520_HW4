@@ -27,10 +27,15 @@ run_tests() {
         output_file="$thread_dir/output_$i.txt"
         stats_file="$thread_dir/stats_$i.txt"
 
-        # Use /usr/bin/time to capture detailed performance metrics, run executable with this command
-        OMP_NUM_THREADS=$thread_count /usr/bin/time -v ./openmp_max_ascii $INPUT_FILE > $output_file 2> $stats_file
+        # Set thread count and affinity for this test
+        export OMP_NUM_THREADS=$thread_count
+        export OMP_PROC_BIND=close
+        export OMP_PLACES=cores
+        
+        # Use /usr/bin/time to capture detailed performance metrics
+        /usr/bin/time -v ./openmp_max_ascii $INPUT_FILE > $output_file 2> $stats_file
 
-	# Extract key performance metrics and save to a summary file
+        # Extract key performance metrics and save to a summary file
         echo "Thread count: $thread_count, Iteration: $i" >> "$thread_dir/summary.txt"
         grep "User time" $stats_file >> "$thread_dir/summary.txt"
         grep "System time" $stats_file >> "$thread_dir/summary.txt"
